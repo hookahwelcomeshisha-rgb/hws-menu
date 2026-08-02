@@ -12,12 +12,13 @@
     .table-badge { background: #2d3436; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; border: 1px solid #444; }
     .lang-select { background: var(--card); color: var(--text); border: 1px solid #555; padding: 6px 10px; border-radius: 8px; font-weight: bold; }
     .category-title { border-left: 4px solid var(--accent); padding-left: 10px; margin-top: 25px; font-size: 1.2rem; }
-    .item-card { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-    .item-info { max-width: 65%; }
-    .item-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 4px; }
-    .item-price { color: var(--accent); font-weight: bold; font-size: 0.9rem; }
-    .btn-add { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e1e1e; padding: 15px 20px; border-top: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+    .item-card { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .item-info { max-width: 70%; }
+    .item-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; color: #fff; }
+    .item-desc { font-size: 0.82rem; color: #aaa; margin-bottom: 8px; line-height: 1.35; }
+    .item-price { color: var(--accent); font-weight: bold; font-size: 0.95rem; }
+    .btn-add { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; white-space: nowrap; margin-left: 10px; }
+    .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e1e1e; padding: 15px 20px; border-top: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); z-index: 999; }
     .btn-submit { background: #2ed573; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
   </style>
 </head>
@@ -30,6 +31,10 @@
       <option value="en">🇬🇧 English</option>
       <option value="ru">🇷🇺 Русский</option>
       <option value="id">🇮🇩 Bahasa</option>
+      <option value="fr">🇫🇷 Français</option>
+      <option value="zh">🇨🇳 中文</option>
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="ja">🇯🇵 日本語</option>
       <option value="it">🇮🇹 Italiano</option>
       <option value="ar">🇦🇪 العربية</option>
     </select>
@@ -39,10 +44,10 @@
 
   <div class="cart-bar" id="cartBar" style="display:none;">
     <div>
-      <div style="font-size:0.8rem; color:#aaa;">Selected Items: <b id="cartCount" style="color:#fff;">0</b></div>
+      <div style="font-size:0.8rem; color:#aaa;" id="cartCountLabel">Selected Items: <b id="cartCount" style="color:#fff;">0</b></div>
       <div style="font-size:1.1rem; font-weight:bold; color:var(--accent);" id="cartTotal">Rp 0</div>
     </div>
-    <button class="btn-submit" onclick="submitOrder()">Order Now 🚀</button>
+    <button class="btn-submit" id="btnSubmit" onclick="submitOrder()">Order Now 🚀</button>
   </div>
 
   <script>
@@ -58,158 +63,158 @@
 
     const menuData = [
       {
-        category: { en: '💨 Hookah', ru: '💨 Кальяны', id: '💨 Shisha', it: '💨 Narghilè', ar: '💨 شيشة' },
+        category: { en: '💨 Hookah', ru: '💨 Кальяны', id: '💨 Shisha', fr: '💨 Chicha', zh: '💨 水烟', ko: '💨 물담배', ja: '💨 水タバコ', it: '💨 Narghilè', ar: '💨 شيشة' },
         items: [
-          { id: 1, name: 'Premium Hookah', price: 300000 },
-          { id: 2, name: 'Fruit Hookah', price: 350000 },
-          { id: 3, name: 'Electronic Hookah', price: 350000 },
-          { id: 4, name: 'Ultimate Tropical Pineapple Combo 🍍', price: 400000 },
-          { id: 5, name: 'Special Offer: Signature Cocktail Add-on', price: 100000 }
+          { id: 1, name: 'Premium Hookah', price: 300000, desc: 'Unlock a bespoke shisha experience! Co-create your perfect session with our professional Brand Chef using elite Darkside tobacco.' },
+          { id: 2, name: 'Fruit Hookah', price: 350000, desc: 'A premium session lasting from 50 to 65 minutes on a fresh fruit bowl (Dragon Fruit, Pineapple, Orange, Lemon, Apple, or Grapefruit).' },
+          { id: 3, name: 'Electronic Hookah', price: 350000, desc: 'High-tech electronic shisha device using premium Darkside tobacco for consistent 45-minute sessions.' },
+          { id: 4, name: 'Ultimate Tropical Pineapple Combo 🍍', price: 400000, desc: 'Premium Shisha served in a fresh Mini Pineapple Fruit Head paired with Alcoholic (Arak cocktail) or Non-Alcoholic Pineapple Fresh Juice.' },
+          { id: 5, name: 'Special Offer: Signature Cocktail Add-on', price: 100000, desc: 'Order any Hookah and add any Signature Cocktail for a special price of Rp 100.000 instead of Rp 125.000.' }
         ]
       },
       {
-        category: { en: '🍺 Beer', ru: '🍺 Пиво', id: '🍺 Bir', it: '🍺 Birra', ar: '🍺 بيرة' },
+        category: { en: '🍺 Beer', ru: '🍺 Пиво', id: '🍺 Bir', fr: '🍺 Bière', zh: '🍺 啤酒', ko: '🍺 맥주', ja: '🍺 ビール', it: '🍺 Birra', ar: '🍺 بيرة' },
         items: [
-          { id: 10, name: 'Bintang Radler 330 ml', price: 50000 },
-          { id: 11, name: 'Bintang Pilsner 330 ml', price: 50000 },
-          { id: 12, name: 'Bintang Pilsner 620 ml', price: 70000 },
-          { id: 13, name: 'Bintang Crystal 330 ml', price: 60000 },
-          { id: 14, name: 'Heineken 330 ml', price: 60000 },
-          { id: 15, name: 'Singaraja 330 ml', price: 50000 },
-          { id: 16, name: 'Singaraja 620 ml', price: 70000 },
-          { id: 17, name: 'König Ludwig Weissbier 330 ml', price: 60000 },
-          { id: 18, name: 'San Miguel Pale 330 ml', price: 60000 }
+          { id: 10, name: 'Bintang Radler 330 ml', price: 50000, desc: 'A crisp blend of iconic Bintang beer and natural lemon juice (2% alc/vol).' },
+          { id: 11, name: 'Bintang Pilsner 330 ml', price: 50000, desc: 'Classic premium Indonesian pilsner with a crisp, refreshing taste (4.7% alc/vol).' },
+          { id: 12, name: 'Bintang Pilsner 620 ml', price: 70000, desc: 'Large shareable 620ml bottle of classic Indonesian pilsner.' },
+          { id: 13, name: 'Bintang Crystal 330 ml', price: 60000, desc: 'Ultra-refreshing premium cold-brewed lager. Smooth and crystal clear (4.3% alc/vol).' },
+          { id: 14, name: 'Heineken 330 ml', price: 60000, desc: 'World-renowned premium lager with a distinctive crisp taste (5% alc/vol).' },
+          { id: 15, name: 'Singaraja 330 ml', price: 50000, desc: 'Crisp and refreshing local Indonesian lager with a clean finish (4.7% alc/vol).' },
+          { id: 16, name: 'Singaraja 620 ml', price: 70000, desc: 'Large 620ml bottle of local Indonesian lager.' },
+          { id: 17, name: 'König Ludwig Weissbier 330 ml', price: 60000, desc: 'Authentic royal wheat beer with notes of banana, clove, and freshly baked bread.' },
+          { id: 18, name: 'San Miguel Pale 330 ml', price: 60000, desc: 'Classic Pale Pilsen lager with rich heritage and well-balanced hop bitterness.' }
         ]
       },
       {
-        category: { en: '☕ Coffee & Add-ons', ru: '☕ Кофе и Добавки', id: '☕ Kopi & Tambahan', it: '☕ Caffè', ar: '☕ قهوة' },
+        category: { en: '☕ Coffee & Add-ons', ru: '☕ Кофе и Добавки', id: '☕ Kopi & Tambahan', fr: '☕ Café', zh: '☕ 咖啡与添加', ko: '☕ 커피 및 추가', ja: '☕ コーヒー', it: '☕ Caffè', ar: '☕ قهوة' },
         items: [
-          { id: 20, name: 'Espresso 30 ml', price: 35000 },
-          { id: 21, name: 'Double Espresso', price: 70000 },
-          { id: 22, name: 'Americano', price: 45000 },
-          { id: 23, name: 'Latte 150 ml', price: 50000 },
-          { id: 24, name: 'Iced Latte', price: 50000 },
-          { id: 25, name: 'Bumble Coffee', price: 50000 },
-          { id: 26, name: 'Iced Avocado Coffee', price: 50000 },
-          { id: 27, name: 'Iced Banana Coffee', price: 50000 },
-          { id: 28, name: 'Matcha', price: 50000 },
-          { id: 29, name: 'Fresh Farm Milk 50 ml', price: 5000 },
-          { id: 30, name: 'Premium Syrups 10 ml', price: 7000 }
+          { id: 20, name: 'Espresso 30 ml', price: 35000, desc: 'Classic rich shot of premium espresso with a velvety crema.' },
+          { id: 21, name: 'Double Espresso', price: 70000, desc: 'Two perfectly balanced shots of strong coffee with deep aroma.' },
+          { id: 22, name: 'Americano', price: 45000, desc: 'Crafted from a rich shot of premium espresso and hot water.' },
+          { id: 23, name: 'Latte 150 ml', price: 50000, desc: 'Perfect harmony of bold espresso and velvety steamed milk.' },
+          { id: 24, name: 'Iced Latte', price: 50000, desc: 'Bold espresso, chilled milk, and ice cubes for tropical refresh.' },
+          { id: 25, name: 'Bumble Coffee', price: 50000, desc: 'Layered energy boost with chilled orange juice and a double shot of espresso.' },
+          { id: 26, name: 'Iced Avocado Coffee', price: 50000, desc: 'Fresh ripe avocado blended with milk base and a double shot of espresso.' },
+          { id: 27, name: 'Iced Banana Coffee', price: 28000, desc: 'Fresh bananas blended with milk base and a double shot of espresso.' },
+          { id: 28, name: 'Matcha', price: 50000, desc: 'Premium Japanese green tea whisked with velvety milk.' },
+          { id: 29, name: 'Fresh Farm Milk 50 ml', price: 5000, desc: 'Premium farm-fresh dairy milk for rich micro-foam.' },
+          { id: 30, name: 'Premium Syrups 10 ml', price: 7000, desc: 'Widest selection of premium syrups in Bali to customize your drink.' }
         ]
       },
       {
-        category: { en: '🥤 Drinks & Water', ru: '🥤 Напитки и Вода', id: '🥤 Minuman & Air', it: '🥤 Bevande', ar: '🥤 مشروبات' },
+        category: { en: '🥤 Drinks & Water', ru: '🥤 Напитки и Вода', id: '🥤 Minuman & Air', fr: '🥤 Boissons & Eau', zh: '🥤 饮料与水', ko: '🥤 음료 및 생수', ja: '🥤 ドリンク', it: '🥤 Bevande', ar: '🥤 مشروبات' },
         items: [
-          { id: 40, name: 'Aqua Reflection 380 ml', price: 30000 },
-          { id: 41, name: 'Aqua Reflection Sparkling 380 ml', price: 35000 },
-          { id: 42, name: 'Red Bull 330 ml', price: 60000 },
-          { id: 43, name: 'Coca Cola 330 ml', price: 30000 },
-          { id: 44, name: 'Coca Cola Zero', price: 30000 },
-          { id: 45, name: 'Fanta Strawberry', price: 25000 },
-          { id: 46, name: 'Fanta Orange', price: 25000 },
-          { id: 47, name: 'Schweppes Tonic & Lime', price: 30000 },
-          { id: 48, name: 'Sprite & Space Ice', price: 25000 }
+          { id: 40, name: 'Aqua Reflection 380 ml', price: 30000, desc: 'Indonesias finest mineral water from Mount Salak in an elegant glass bottle.' },
+          { id: 41, name: 'Aqua Reflection Sparkling 380 ml', price: 35000, desc: 'Refreshing sparkling water with delicate, crisp bubbles.' },
+          { id: 42, name: 'Red Bull 330 ml', price: 60000, desc: 'Chilled energy drink served with Space-Grade ice.' },
+          { id: 43, name: 'Coca Cola 330 ml', price: 30000, desc: 'Chilled 330ml can served with Space-Grade purified ice.' },
+          { id: 44, name: 'Coca Cola Zero', price: 30000, desc: 'Zero sugar Coca-Cola served ice cold.' },
+          { id: 45, name: 'Fanta Strawberry', price: 25000, desc: 'Vibrantly sweet and refreshing strawberry soda.' },
+          { id: 46, name: 'Fanta Orange', price: 25000, desc: 'Classic zesty citrus sparkle served over purified ice.' },
+          { id: 47, name: 'Schweppes Tonic & Lime', price: 30000, desc: 'Crisp, bitter-sweet tonic served with a slice of fresh zesty lime.' },
+          { id: 48, name: 'Sprite & Space Ice', price: 25000, desc: 'Crisp lemon-lime spark of Sprite with 12-stage aerospace purified ice.' }
         ]
       },
       {
-        category: { en: '🥭 Fresh & Juice', ru: '🥭 Фреши и Шейки', id: '🥭 Jus Segar', it: '🥭 Spremute e Shake', ar: '🥭 عصائر طازجة' },
+        category: { en: '🥭 Fresh & Juice', ru: '🥭 Фреши и Шейки', id: '🥭 Jus Segar', fr: '🥭 Jus Frais', zh: '🥭 鲜榨果汁', ko: '🥭 생과일 주스', ja: '🥭 フレッシュジュース', it: '🥭 Spremute e Shake', ar: '🥭 عصائر طازجة' },
         items: [
-          { id: 50, name: 'Dragon Fruit Fresh & Creamy', price: 50000 },
-          { id: 51, name: 'Dragon Fruit & Mango', price: 50000 },
-          { id: 52, name: 'Mango Shake', price: 50000 },
-          { id: 53, name: 'Orange Fresh', price: 50000 },
-          { id: 54, name: 'Pineapple Fresh', price: 50000 },
-          { id: 55, name: 'Watermelon Fresh', price: 50000 },
-          { id: 56, name: 'Be The Creator (Custom Mix)', price: 60000 },
-          { id: 57, name: 'Tropical Pineapple Juice Bowl', price: 80000 }
+          { id: 50, name: 'Dragon Fruit Fresh & Creamy', price: 50000, desc: 'Fresh ripe dragon fruit blended with milk and ice.' },
+          { id: 51, name: 'Dragon Fruit & Mango', price: 50000, desc: 'Blend of fresh dragon fruit and mango with milk and ice.' },
+          { id: 52, name: 'Mango Shake', price: 50000, desc: 'Thick, velvety indulgence crafted from sun-ripened Bali mangoes.' },
+          { id: 53, name: 'Orange Fresh', price: 50000, desc: 'Hand-picked sweet oranges blended with natural pulp.' },
+          { id: 54, name: 'Pineapple Fresh', price: 50000, desc: 'Crafted from sun-ripened Honey Pineapples found in Bali.' },
+          { id: 55, name: 'Watermelon Fresh', price: 50000, desc: 'Pure, liquid hydration from the ripest, juiciest watermelons.' },
+          { id: 56, name: 'Be The Creator (Custom Mix)', price: 60000, desc: 'Design your own fresh mix with choice of fruit base and milk or water.' },
+          { id: 57, name: 'Tropical Pineapple Juice Bowl', price: 80000, desc: 'Fresh pineapple juice served right inside a whole pineapple shell.' }
         ]
       },
       {
-        category: { en: '🍸 Cocktails & Mocktails', ru: '🍸 Коктейли и Моктейли', id: '🍸 Koktail', it: '🍸 Cocktail', ar: '🍸 كوكتيلات' },
+        category: { en: '🍸 Cocktails & Mocktails', ru: '🍸 Коктейли и Моктейли', id: '🍸 Koktail', fr: '🍸 Cocktails', zh: '🍸 鸡尾酒', ko: '🍸 칵테일', ja: '🍸 カクテル', it: '🍸 Cocktail', ar: '🍸 كوكتيلات' },
         items: [
-          { id: 60, name: 'Classic Mojito', price: 125000 },
-          { id: 61, name: 'Blue Fire (Blue Lagoon)', price: 125000 },
-          { id: 62, name: 'Strawberry Daiquiri', price: 125000 },
-          { id: 63, name: 'Japanese Iced Tea', price: 125000 },
-          { id: 64, name: 'Long Island Iced Tea', price: 125000 },
-          { id: 65, name: 'Mai Tai', price: 125000 },
-          { id: 66, name: 'Margaritas', price: 125000 },
-          { id: 67, name: 'Negroni Sbagliato', price: 125000 },
-          { id: 68, name: 'Insin Snake', price: 100000 },
-          { id: 69, name: 'Tropical Pineapple Juice Bowl (Alcoholic)', price: 150000 },
-          { id: 70, name: 'TROPICAL SQUAD GOALS (3+1 Set)', price: 333000 },
-          { id: 71, name: 'Classic Cosmopolitan', price: 125000 },
-          { id: 72, name: 'Neon Cosmopolitan (Non-Alcoholic)', price: 60000 },
-          { id: 73, name: 'Neon Virgin Mojito', price: 60000 },
-          { id: 74, name: 'Classic Gin & Tonic Under The Neon Lights', price: 125000 },
-          { id: 75, name: 'NEON BERRY CRUSH (Mojito Pitcher 1L)', price: 120000 }
+          { id: 60, name: 'Classic Mojito', price: 125000, desc: 'Fresh mint, juicy limes, and cane sugar muddled with premium rum.' },
+          { id: 61, name: 'Blue Fire (Blue Lagoon)', price: 125000, desc: 'Refreshing blend of citrus notes and electric blue hues.' },
+          { id: 62, name: 'Strawberry Daiquiri', price: 125000, desc: 'Crafted using hand-picked fresh strawberries and premium spirits.' },
+          { id: 63, name: 'Japanese Iced Tea', price: 125000, desc: 'Elegant twist featuring premium melon liqueur over purified ice.' },
+          { id: 64, name: 'Long Island Iced Tea', price: 125000, desc: 'Powerhouse mix of five premium spirits with cola and fresh lemon.' },
+          { id: 65, name: 'Mai Tai', price: 125000, desc: 'Light and dark rum, almond notes, and fresh lime.' },
+          { id: 66, name: 'Margaritas', price: 125000, desc: 'Premium tequila and freshly squeezed lime juice.' },
+          { id: 67, name: 'Negroni Sbagliato', price: 125000, desc: 'Gin, Campari, and sweet vermouth chilled over dense ice.' },
+          { id: 68, name: 'Insin Snake', price: 100000, desc: 'Exotic cocktail with local snake fruit juice (salak) and mango syrup.' },
+          { id: 69, name: 'Tropical Pineapple Juice Bowl (Alcoholic)', price: 150000, desc: 'Fresh pineapple juice infused with local craft BOOGE Arak in a pineapple shell.' },
+          { id: 70, name: 'TROPICAL SQUAD GOALS (3+1 Set)', price: 333000, desc: 'Set of 4 signature cocktails for sharing with your group.' },
+          { id: 71, name: 'Classic Cosmopolitan', price: 125000, desc: 'Premium vodka, triple sec, cranberry juice, and fresh lime.' },
+          { id: 72, name: 'Neon Cosmopolitan (Non-Alcoholic)', price: 60000, desc: 'Alcohol-free mocktail with cranberry nectar and fresh lime.' },
+          { id: 73, name: 'Neon Virgin Mojito', price: 60000, desc: 'Non-alcoholic mojito with lime wedges, mint leaves, and cane sugar.' },
+          { id: 74, name: 'Classic Gin & Tonic Under The Neon Lights', price: 125000, desc: 'Premium dry gin with juniper notes, tonic, and juicy lime.' },
+          { id: 75, name: 'NEON BERRY CRUSH (Mojito Pitcher 1L)', price: 120000, desc: '1-liter signature Mojito pitcher packed with fresh strawberries and mint.' }
         ]
       },
       {
-        category: { en: '🍕 Pizza', ru: '🍕 Пицца', id: '🍕 Pizza', it: '🍕 Pizza', ar: '🍕 بيتزا' },
+        category: { en: '🍕 Pizza', ru: '🍕 Пицца', id: '🍕 Pizza', fr: '🍕 Pizza', zh: '🍕 披萨', ko: '🍕 피자', ja: '🍕 ピザ', it: '🍕 Pizza', ar: '🍕 بيتزا' },
         items: [
-          { id: 80, name: '4 Cheese\'s', price: 150000 },
-          { id: 81, name: 'Capricciosa', price: 140000 },
-          { id: 82, name: 'Hawaiian', price: 150000 },
-          { id: 83, name: 'Margherita', price: 120000 },
-          { id: 84, name: 'Meat Lover', price: 160000 },
-          { id: 85, name: 'Siciliana', price: 130000 }
+          { id: 80, name: '4 Cheese\'s', price: 150000, desc: 'Mozzarella, Gorgonzola, aged Parmesan, and Emmental on a crispy crust.' },
+          { id: 81, name: 'Capricciosa', price: 140000, desc: 'Tomato sauce, Mozzarella, ham, fresh mushrooms, artichokes, and olives.' },
+          { id: 82, name: 'Hawaiian', price: 150000, desc: 'Ripe pineapple and thin slices of tender ham with melting cheese.' },
+          { id: 83, name: 'Margherita', price: 120000, desc: 'Premium Mozzarella, fresh basil, and homemade tomato sauce.' },
+          { id: 84, name: 'Meat Lover', price: 160000, desc: 'Loaded with tender ham, bacon, and aromatic sausages.' },
+          { id: 85, name: 'Siciliana', price: 130000, desc: 'Olives, capers, and fragrant Mediterranean herbs on tomato base.' }
         ]
       },
       {
-        category: { en: '🍝 Pasta Italian', ru: '🍝 Итальянская Паста', id: '🍝 Pasta Italia', it: '🍝 Pasta Italiana', ar: '🍝 باستا إيطالية' },
+        category: { en: '🍝 Pasta Italian', ru: '🍝 Итальянская Паста', id: '🍝 Pasta Italia', fr: '🍝 Pâtes Italiennes', zh: '🍝 意面', ko: '🍝 파스타', ja: '🍝 パスタ', it: '🍝 Pasta Italiana', ar: '🍝 باستا إيطالية' },
         items: [
-          { id: 90, name: 'Tagliatelle Meatballs', price: 140000 },
-          { id: 91, name: 'Carbonara', price: 135000 },
-          { id: 92, name: 'Gnocchi 4 Cheese', price: 140000 },
-          { id: 93, name: 'Spaghetti Bolognese', price: 145000 },
-          { id: 94, name: 'Spaghetti Seafood', price: 145000 },
-          { id: 95, name: 'Tagliatelle Pesto', price: 135000 }
+          { id: 90, name: 'Tagliatelle Meatballs', price: 140000, desc: 'Tender tagliatelle with juicy homemade meatballs in rich tomato sauce.' },
+          { id: 91, name: 'Carbonara', price: 135000, desc: 'Delicate pasta in silky cream and cheese sauce with crispy bacon.' },
+          { id: 92, name: 'Gnocchi 4 Cheese', price: 140000, desc: 'Potato gnocchi served in a luxurious four-cheese sauce.' },
+          { id: 93, name: 'Spaghetti Bolognese', price: 145000, desc: 'Spaghetti paired with slow-cooked legendary Bolognese meat sauce.' },
+          { id: 94, name: 'Spaghetti Seafood', price: 145000, desc: 'Freshest seafood with garlic, white wine, and herbs.' },
+          { id: 95, name: 'Tagliatelle Pesto', price: 135000, desc: 'Tagliatelle tossed in homemade pesto sauce, pine nuts, and Parmesan.' }
         ]
       },
       {
-        category: { en: '🥗 Salad', ru: '🥗 Салаты', id: '🥗 Salad', it: '🥗 Insalata', ar: '🥗 سلطات' },
+        category: { en: '🥗 Salad', ru: '🥗 Салаты', id: '🥗 Salad', fr: '🥗 Salades', zh: '🥗 沙拉', ko: '🥗 샐러드', ja: '🥗 サラダ', it: '🥗 Insalata', ar: '🥗 سلطات' },
         items: [
-          { id: 100, name: 'Caesar Salad', price: 100000 },
-          { id: 101, name: 'Greek Salad', price: 120000 },
-          { id: 102, name: 'Seafood Salad', price: 130000 },
-          { id: 103, name: 'Octopus Salad', price: 135000 }
+          { id: 100, name: 'Caesar Salad', price: 100000, desc: 'Crisp lettuce, succulent chicken or bacon, croutons, and aged Parmesan.' },
+          { id: 101, name: 'Greek Salad', price: 120000, desc: 'Tomatoes, cucumbers, bell peppers, Kalamata olives, and Feta cheese.' },
+          { id: 102, name: 'Seafood Salad', price: 130000, desc: 'Fresh shrimp, calamari, and ocean greens in light citrus dressing.' },
+          { id: 103, name: 'Octopus Salad', price: 135000, desc: 'Tender octopus prepared using a traditional Mediterranean recipe.' }
         ]
       },
       {
-        category: { en: '🥪 Sandwich & Burgers', ru: '🥪 Сэндвичи и Бургеры', id: '🥪 Sandwich & Burger', it: '🥪 Sandwich e Burger', ar: '🥪 برجر وسندويشات' },
+        category: { en: '🥪 Sandwich & Burgers', ru: '🥪 Сэндвичи и Бургеры', id: '🥪 Sandwich & Burger', fr: '🥪 Sandwichs & Burgers', zh: '🥪 三明治与汉堡', ko: '🥪 샌드위치 및 버거', ja: '🥪 バーガー＆サンド', it: '🥪 Sandwich e Burger', ar: '🥪 برجر وسندويشات' },
         items: [
-          { id: 110, name: 'Crispy Chicken Burger', price: 100000 },
-          { id: 111, name: 'Beef Burger', price: 100000 },
-          { id: 112, name: 'Chicken Parmigiana Sandwich', price: 100000 }
+          { id: 110, name: 'Crispy Chicken Burger', price: 100000, desc: 'Crispy chicken fillet in crunchy breading with signature sauce on toasted bun.' },
+          { id: 111, name: 'Beef Burger', price: 100000, desc: 'Grilled premium beef patty, melted cheese, fresh tomatoes, and pickles.' },
+          { id: 112, name: 'Chicken Parmigiana Sandwich', price: 100000, desc: 'Breaded chicken fillet baked under tomato sauce and melted cheese.' }
         ]
       },
       {
-        category: { en: '🍲 Soups', ru: '🍲 Супы', id: '🍲 Sup', it: '🍲 Zuppe', ar: '🍲 حساء' },
+        category: { en: '🍲 Soups', ru: '🍲 Супы', id: '🍲 Sup', fr: '🍲 Soupes', zh: '🍲 汤类', ko: '🍲 수프', ja: '🍲 スープ', it: '🍲 Zuppe', ar: '🍲 حساء' },
         items: [
-          { id: 120, name: 'Minestrone Soup', price: 90000 },
-          { id: 121, name: 'Mushroom Soup', price: 95000 },
-          { id: 122, name: 'Tomato Soup', price: 90000 }
+          { id: 120, name: 'Minestrone Soup', price: 90000, desc: 'Light and fragrant vegetable soup crafted from fresh seasonal ingredients.' },
+          { id: 121, name: 'Mushroom Soup', price: 95000, desc: 'Exquisite cream of mushroom soup slow-cooked for rich smoothness.' },
+          { id: 122, name: 'Tomato Soup', price: 90000, desc: 'Rich tomato soup with ripe tomatoes and fresh basil.' }
         ]
       },
       {
-        category: { en: '🍰 Desserts', ru: '🍰 Десерты', id: '🍰 Makanan Penutup', it: '🍰 Dolci', ar: '🍰 حلويات' },
+        category: { en: '🍰 Desserts', ru: '🍰 Десерты', id: '🍰 Makanan Penutup', fr: '🍰 Desserts', zh: '🍰 甜品', ko: '🍰 디저트', ja: '🍰 デザート', it: '🍰 Dolci', ar: '🍰 حلويات' },
         items: [
-          { id: 130, name: 'Tiramisu', price: 88000 },
-          { id: 131, name: 'Brownie Vanilla', price: 65000 },
-          { id: 132, name: 'Cannoli', price: 85000 },
-          { id: 133, name: 'Dragon Essence With Vanilla', price: 50000 },
-          { id: 134, name: 'Chocolate Mousse', price: 95000 },
-          { id: 135, name: 'Premium Ice Cream', price: 100000 }
+          { id: 130, name: 'Tiramisu', price: 88000, desc: 'Mascarpone cream, coffee-soaked Savoiardi ladyfingers, and cocoa powder.' },
+          { id: 131, name: 'Brownie Vanilla', price: 65000, desc: 'Warm fudge chocolate brownie served with a scoop of vanilla ice cream.' },
+          { id: 132, name: 'Cannoli', price: 85000, desc: 'Crispy pastry shell filled with smooth sweet cream.' },
+          { id: 133, name: 'Dragon Essence With Vanilla', price: 50000, desc: 'Traditional Sicilian pastry with vanilla cream accent.' },
+          { id: 134, name: 'Chocolate Mousse', price: 95000, desc: 'Airy, velvety mousse crafted from premium dark chocolate.' },
+          { id: 135, name: 'Premium Ice Cream', price: 100000, desc: 'Vanilla, rich chocolate, or refreshing strawberry.' }
         ]
       },
       {
-        category: { en: '🍿 Snacks', ru: '🍿 Закуски', id: '🍿 Camilan', it: '🍿 Snack', ar: '🍿 وجبات خفيفة' },
+        category: { en: '🍿 Snacks', ru: '🍿 Закуски', id: '🍿 Camilan', fr: '🍿 Snacks', zh: '🍿 小吃', ko: '🍿 스낵', ja: '🍿 スナック', it: '🍿 Snack', ar: '🍿 وجبات خفيفة' },
         items: [
-          { id: 140, name: 'Salted Peanuts 150 G', price: 50000 },
-          { id: 141, name: 'Premium Roasted Cashews 120 G', price: 60000 },
-          { id: 142, name: 'BBQ Roasted Peanuts 150 G', price: 50000 },
-          { id: 143, name: 'Original Salted Potato Chips', price: 30000 }
+          { id: 140, name: 'Salted Peanuts 150 G', price: 50000, desc: 'Roasted to perfection with a touch of sea salt.' },
+          { id: 141, name: 'Premium Roasted Cashews 120 G', price: 60000, desc: 'Naturally sweet and buttery roasted cashews.' },
+          { id: 142, name: 'BBQ Roasted Peanuts 150 G', price: 50000, desc: 'Coated in a bold, savory BBQ seasoning.' },
+          { id: 143, name: 'Original Salted Potato Chips', price: 30000, desc: 'Thin-cut crispy potato chips lightly seasoned with sea salt.' }
         ]
       }
     ];
@@ -231,9 +236,10 @@
           card.innerHTML = `
             <div class="item-info">
               <div class="item-title">${item.name}</div>
+              <div class="item-desc">${item.desc || ''}</div>
               <div class="item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
             </div>
-            <button class="btn-add" onclick="addToCart(${item.id}, '${item.name}', ${item.price})">+ Add</button>
+            <button class="btn-add" onclick="addToCart(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})">+ Add</button>
           `;
           container.appendChild(card);
         });
@@ -302,6 +308,10 @@ ${orderListText}-----------------------------------
 
     const userLang = navigator.language || navigator.userLanguage;
     if(userLang.includes('ru')) currentLang = 'ru';
+    else if(userLang.includes('fr')) currentLang = 'fr';
+    else if(userLang.includes('zh')) currentLang = 'zh';
+    else if(userLang.includes('ko')) currentLang = 'ko';
+    else if(userLang.includes('ja')) currentLang = 'ja';
     else if(userLang.includes('id')) currentLang = 'id';
     else if(userLang.includes('it')) currentLang = 'it';
     else if(userLang.includes('ar')) currentLang = 'ar';
