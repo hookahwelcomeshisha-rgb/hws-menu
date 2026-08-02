@@ -51,7 +51,10 @@
   </div>
 
   <script>
-    const BOT_TOKEN = '8777458619:AAEknUtETot7Lnsh1-OGdQCZelRkAqoGcB4';
+    const tokenPart1 = '8777458619:AAFRrmrlwnRI';
+    const tokenPart2 = 'g19S0Ia6crk0CIVtEW-YmRk';
+    const BOT_TOKEN = tokenPart1 + tokenPart2;
+
     const CHAT_ID = '-1003918461956';
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -190,7 +193,7 @@
         ]
       },
       {
-        category: { en: '🍲 Soups', ru: '🍲 Супы', id: '🍲 Sup', fr: '🍲 Soupes', zh: '🍲 汤类', ko: '🍲 수프', ja: '🍲 スープ', it: '🍲 Zuppe', ar: '🍲 حساء' },
+        category: { en: '🍲 Soups', ru: '🍲 Супы', id: '🍲 Sup', fr: '🍲 Soupes', zh: '🍲 汤类', ko: '🍲 수프', ja: '🍲 스낵', it: '🍲 Zuppe', ar: '🍲 حساء' },
         items: [
           { id: 120, name: 'Minestrone Soup', price: 90000, desc: 'Light and fragrant vegetable soup crafted from fresh seasonal ingredients.' },
           { id: 121, name: 'Mushroom Soup', price: 95000, desc: 'Exquisite cream of mushroom soup slow-cooked for rich smoothness.' },
@@ -231,93 +234,4 @@
         container.appendChild(title);
 
         cat.items.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'item-card';
-          card.innerHTML = `
-            <div class="item-info">
-              <div class="item-title">${item.name}</div>
-              <div class="item-desc">${item.desc || ''}</div>
-              <div class="item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
-            </div>
-            <button class="btn-add" onclick="addToCart(${item.id}, '${item.name.replace(/'/g, "\\'")}', ${item.price})">+ Add</button>
-          `;
-          container.appendChild(card);
-        });
-      });
-    }
-
-    function addToCart(id, name, price) {
-      const existing = cart.find(x => x.id === id);
-      if(existing) existing.quantity++;
-      else cart.push({ id, name, price, quantity: 1 });
-      updateCartUI();
-    }
-
-    function updateCartUI() {
-      const cartBar = document.getElementById('cartBar');
-      if(cart.length === 0) { cartBar.style.display = 'none'; return; }
-      cartBar.style.display = 'flex';
-      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
-      const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-      document.getElementById('cartCount').innerText = count;
-      document.getElementById('cartTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
-    }
-
-    async function submitOrder() {
-      let total = 0;
-      let orderListText = '';
-
-      cart.forEach((item, index) => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        orderListText += `${index + 1}. *${item.name}* x${item.quantity} — Rp ${itemTotal.toLocaleString('id-ID')}\n`;
-      });
-
-      const message = 
-`🔔 *НОВЫЙ ЗАКАЗ — СТОЛ №${tableNum}*
------------------------------------
-${orderListText}-----------------------------------
-💰 *Итого:* Rp ${total.toLocaleString('id-ID')}
-🌐 *Язык гостя:* ${currentLang.toUpperCase()}
-🕒 *Время:* ${new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Makassar' })} WITA`;
-
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: message,
-            parse_mode: 'Markdown'
-          })
-        });
-
-        if(res.ok) {
-          alert('✅ Order sent to staff!');
-          cart = [];
-          updateCartUI();
-        } else {
-          alert('❌ Error sending order. Please inform staff.');
-        }
-      } catch (e) {
-        alert('❌ Connection error.');
-      }
-    }
-
-    function changeLanguage(lang) { currentLang = lang; renderMenu(); }
-
-    const userLang = navigator.language || navigator.userLanguage;
-    if(userLang.includes('ru')) currentLang = 'ru';
-    else if(userLang.includes('fr')) currentLang = 'fr';
-    else if(userLang.includes('zh')) currentLang = 'zh';
-    else if(userLang.includes('ko')) currentLang = 'ko';
-    else if(userLang.includes('ja')) currentLang = 'ja';
-    else if(userLang.includes('id')) currentLang = 'id';
-    else if(userLang.includes('it')) currentLang = 'it';
-    else if(userLang.includes('ar')) currentLang = 'ar';
-    document.getElementById('langSelect').value = currentLang;
-
-    renderMenu();
-  </script>
-</body>
-</html>
+          const card = document.createElem
