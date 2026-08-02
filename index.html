@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HWS & Darkside Lounge Bar Kuta</title>
+  <style>
+    :root { --bg: #121212; --card: #1e1e1e; --accent: #ff4757; --text: #ffffff; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 90px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+    .logo { font-size: 1.1rem; font-weight: bold; color: var(--accent); }
+    .table-badge { background: #2d3436; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; border: 1px solid #444; }
+    .lang-select { background: var(--card); color: var(--text); border: 1px solid #555; padding: 6px 10px; border-radius: 8px; font-weight: bold; }
+    .category-title { border-left: 4px solid var(--accent); padding-left: 10px; margin-top: 25px; font-size: 1.2rem; }
+    .item-card { background: var(--card); padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+    .item-info { max-width: 65%; }
+    .item-title { font-weight: bold; font-size: 0.95rem; margin-bottom: 4px; }
+    .item-price { color: var(--accent); font-weight: bold; font-size: 0.9rem; }
+    .btn-add { background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1e1e1e; padding: 15px 20px; border-top: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+    .btn-submit { background: #2ed573; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">HWS & Darkside</div>
+    <div class="table-badge" id="tableDisplay">Table #--</div>
+    <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
+      <option value="en">🇬🇧 English</option>
+      <option value="ru">🇷🇺 Русский</option>
+      <option value="id">🇮🇩 Bahasa</option>
+      <option value="it">🇮🇹 Italiano</option>
+      <option value="ar">🇦🇪 العربية</option>
+    </select>
+  </div>
+
+  <div id="menuContainer"></div>
+
+  <div class="cart-bar" id="cartBar" style="display:none;">
+    <div>
+      <div style="font-size:0.8rem; color:#aaa;">Selected Items: <b id="cartCount" style="color:#fff;">0</b></div>
+      <div style="font-size:1.1rem; font-weight:bold; color:var(--accent);" id="cartTotal">Rp 0</div>
+    </div>
+    <button class="btn-submit" onclick="submitOrder()">Order Now 🚀</button>
+  </div>
+
+  <script>
+    const BOT_TOKEN = '8777458619:AAEknUtETot7Lnsh1-OGdQCZelRkAqoGcB4';
+    const CHAT_ID = '-1003918461956';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNum = urlParams.get('table') || '1';
+    document.getElementById('tableDisplay').innerText = `Table #${tableNum}`;
+
+    let currentLang = 'en';
+    let cart = [];
+
+    const menuData = [
+      {
+        category: { en: '💨 Hookah & Bowls', ru: '💨 Кальяны и Чаши', id: '💨 Shisha & Mangkuk', it: '💨 Narghilè', ar: '💨 شيشة' },
+        items: [
+          { id: 1, name: 'Classic Hookah', price: 250000 },
+          { id: 2, name: 'Premium Hookah (Darkside / Starline)', price: 300000 },
+          { id: 3, name: 'Fruit Bowl (Grapefruit / Pineapple)', price: 350000 }
+        ]
+      },
+      {
+        category: { en: '☕ Specialty Drinks & Coffee', ru: '☕ Фирменные Напитки и Кофе', id: '☕ Minuman & Kopi', it: '☕ Bevande e Caffè', ar: '☕ مشروبات وقهوة' },
+        items: [
+          { id: 4, name: 'Bumblebee Coffee', price: 45000 },
+          { id: 5, name: 'Neon Virgin Mojito', price: 60000 },
+          { id: 6, name: 'Bintang Pilsner 330ml', price: 50000 }
+        ]
+      }
+    ];
+
+    function renderMenu() {
+      const container = document.getElementById('menuContainer');
+      container.innerHTML = '';
+      if(currentLang === 'ar') { document.body.style.direction = 'rtl'; } else { document.body.style.direction = 'ltr'; }
+
+      menuData.forEach(cat => {
+        const title = document.createElement('h3');
+        title.className = 'category-title';
+        title.innerText = cat.category[currentLang] || cat.category['en'];
+        container.appendChild(title);
+
+        cat.items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'item-card';
+          card.innerHTML = `
+            <div class="item-info">
+              <div class="item-title">${item.name}</div>
+              <div class="item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+            </div>
+            <button class="btn-add" onclick="addToCart(${item.id}, '${item.name}', ${item.price})">+ Add</button>
+          `;
+          container.appendChild(card);
+        });
+      });
+    }
+
+    function addToCart(id, name, price) {
+      const existing = cart.find(x => x.id === id);
+      if(existing) existing.quantity++;
+      else cart.push({ id, name, price, quantity: 1 });
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const cartBar = document.getElementById('cartBar');
+      if(cart.length === 0) { cartBar.style.display = 'none'; return; }
+      cartBar.style.display = 'flex';
+      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+      document.getElementById('cartCount').innerText = count;
+      document.getElementById('cartTotal').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+    }
+
+    async function submitOrder() {
+      let total = 0;
+      let orderListText = '';
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        orderListText += `${index + 1}. *${item.name}* x${item.quantity} — Rp ${itemTotal.toLocaleString('id-ID')}\n`;
+      });
+
+      const message = 
+`🔔 *НОВЫЙ ЗАКАЗ — СТОЛ №${tableNum}*
+-----------------------------------
+${orderListText}-----------------------------------
+💰 *Итого:* Rp ${total.toLocaleString('id-ID')}
+🌐 *Язык гостя:* ${currentLang.toUpperCase()}
+🕒 *Время:* ${new Date().toLocaleTimeString('id-ID', { timeZone: 'Asia/Makassar' })} WITA`;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'Markdown'
+          })
+        });
+
+        if(res.ok) {
+          alert('✅ Order sent to staff!');
+          cart = [];
+          updateCartUI();
+        } else {
+          alert('❌ Error sending order. Please inform staff.');
+        }
+      } catch (e) {
+        alert('❌ Connection error.');
+      }
+    }
+
+    function changeLanguage(lang) { currentLang = lang; renderMenu(); }
+
+    const userLang = navigator.language || navigator.userLanguage;
+    if(userLang.includes('ru')) currentLang = 'ru';
+    else if(userLang.includes('id')) currentLang = 'id';
+    else if(userLang.includes('it')) currentLang = 'it';
+    else if(userLang.includes('ar')) currentLang = 'ar';
+    document.getElementById('langSelect').value = currentLang;
+
+    renderMenu();
+  </script>
+</body>
+</html>
+
